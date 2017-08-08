@@ -1,6 +1,9 @@
 var Reslide = Reslide || {};
 
 Reslide.sync = new function() {
+    this.REFRESH_RATE_MILLISECONDS = 1000;
+
+    this.presentationId = null;
     this.intervalId = null;
     this.callback = null;
     this.callbackContext = null;
@@ -42,24 +45,26 @@ Reslide.sync = new function() {
     };
 
     this.write = function() {
-        Reslide.sync.doAjax({method: 'write', id: Reslide.sync.getUrlParam('id')});
+        Reslide.sync.doAjax({method: 'write', id: Reslide.sync.presentationId});
     };
 
     this.read = function() {
-        Reslide.sync.doAjax({method: 'read', id: Reslide.sync.getUrlParam('id')});
+        Reslide.sync.doAjax({method: 'read', id: Reslide.sync.presentationId});
     };
 
     this.startStream = function(theStreamFunction, theCallback, theCallbackContext) {
         this.callback = theCallback;
         this.callbackContext = theCallbackContext;
-        this.intervalId = setInterval(theStreamFunction, 1000);
+        this.intervalId = setInterval(theStreamFunction, Reslide.sync.REFRESH_RATE_MILLISECONDS);
     }
 
-    this.startReadingStream = function(theCallback, theCallbackContext) {
+    this.startReadingStream = function(thePresentationId, theCallback, theCallbackContext) {
+        this.presentationId = thePresentationId;
         this.startStream(this.read, theCallback, theCallbackContext);
     };
 
-    this.startWritingStream = function() {
+    this.startWritingStream = function(thePresentationId, theCallback, theCallbackContext) {
+        this.presentationId = thePresentationId;
         this.startStream(this.write, theCallback, theCallbackContext);
     };
 };

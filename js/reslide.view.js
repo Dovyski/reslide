@@ -1,6 +1,8 @@
 var Reslide = Reslide || {};
 
 Reslide.view = new function() {
+    this.presenterMode = true;
+    this.presentationId = null;
     this.pdfDoc = null;
     this.canvas = null;
     this.canvasContext = null;
@@ -10,7 +12,6 @@ Reslide.view = new function() {
     this.loading = true;
 
     this.config = {
-        url: '../data/test.pdf',
         scale: 2.0
     };
 
@@ -27,6 +28,15 @@ Reslide.view = new function() {
         if(theData.success) {
             // TODO: hide loading message
             Reslide.view.setPage(theData.data.slide);
+        } else {
+            // TODO: react to error
+        }
+    };
+
+    this.handleWrite = function(theData) {
+        if(theData.success) {
+            // TODO: hide loading message
+            console.log('Write success');
         } else {
             // TODO: react to error
         }
@@ -112,11 +122,11 @@ Reslide.view = new function() {
         Reslide.view.queueRenderPage(Reslide.view.pageNum);
     };
 
-    this.load = function() {
-        console.debug('Starting to load: ', Reslide.view.config.url);
+    this.load = function(theURL) {
+        console.debug('Starting to load: ', theURL);
         Reslide.view.loading = true;
 
-        PDFJS.getDocument(Reslide.view.config.url).then(function(pdfDoc_) {
+        PDFJS.getDocument(theURL).then(function(pdfDoc_) {
             console.debug('Finished loading!');
             Reslide.view.loading = false;
             Reslide.view.pdfDoc = pdfDoc_;
@@ -128,8 +138,13 @@ Reslide.view = new function() {
         });
     };
 
-    this.start = function() {
+    this.start = function(thePresenterMode, theId, theFileURL) {
+        console.log('Reslide.view.start() - ', thePresenterMode ? 'PRESENTER MODE' : 'VIEWER MODE');
+
+        Reslide.view.presenterMode = thePresenterMode;
+        Reslide.view.presentationId = theId;
+
         Reslide.view.init();
-        Reslide.view.load();
+        Reslide.view.load(theFileURL);
     };
 };
