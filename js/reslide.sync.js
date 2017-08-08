@@ -1,7 +1,8 @@
 var Reslide = Reslide || {};
 
 Reslide.sync = new function() {
-    this.REFRESH_RATE_MILLISECONDS = 1000;
+    this.REFRESH_READ_MILLISECONDS = 1000;
+    this.REFRESH_WRITE_MILLISECONDS = 2000;
 
     this.presenterId = null;
     this.presentationId = null;
@@ -47,28 +48,28 @@ Reslide.sync = new function() {
         }).done(Reslide.sync.onSuccess).fail(Reslide.sync.onFail);
     };
 
-    this.write = function() {
-        Reslide.sync.doAjax({method: 'write', presenter: Reslide.sync.presenterId, slide: Reslide.view.pageNum});
+    this.write = function(theSlide) {
+        Reslide.sync.doAjax({method: 'write', presenter: Reslide.sync.presenterId, slide: theSlide || Reslide.view.pageNum});
     };
 
     this.read = function() {
         Reslide.sync.doAjax({method: 'read', id: Reslide.sync.presentationId});
     };
 
-    this.startStream = function(theStreamFunction, theCallback, theCallbackContext) {
+    this.startStream = function(theStreamFunction, theCallback, theCallbackContext, theTime) {
         this.callback = theCallback;
         this.callbackContext = theCallbackContext;
-        this.intervalId = setInterval(theStreamFunction, Reslide.sync.REFRESH_RATE_MILLISECONDS);
+        this.intervalId = setInterval(theStreamFunction, theTime);
     }
 
     this.startReadingStream = function(thePresentationId, theCallback, theCallbackContext) {
         this.presentationId = thePresentationId;
-        this.startStream(this.read, theCallback, theCallbackContext);
+        this.startStream(this.read, theCallback, theCallbackContext, Reslide.sync.REFRESH_READ_MILLISECONDS);
     };
 
     this.startWritingStream = function(thePresentationId, thePresenterId, theCallback, theCallbackContext) {
         this.presenterId = thePresenterId;
         this.presentationId = thePresentationId;
-        this.startStream(this.write, theCallback, theCallbackContext);
+        this.startStream(this.write, theCallback, theCallbackContext, Reslide.sync.REFRESH_WRITE_MILLISECONDS);
     };
 };

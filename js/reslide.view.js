@@ -97,7 +97,7 @@ Reslide.view = new function() {
     };
 
     this.setPage = function(thePageNum) {
-        if(!Reslide.view.pdfDoc || thePageNum >= Reslide.view.pdfDoc.numPages || thePageNum < 1) {
+        if(!Reslide.view.pdfDoc || thePageNum > Reslide.view.pdfDoc.numPages || thePageNum < 1) {
             return;
         }
         Reslide.view.pageNum = thePageNum;
@@ -109,6 +109,10 @@ Reslide.view = new function() {
      */
     this.onPrevPage = function() {
         Reslide.view.setPage(Reslide.view.pageNum - 1);
+
+        if(Reslide.view.presenterMode) {
+            Reslide.sync.write(Reslide.view.pageNum);
+        }
     };
 
     /**
@@ -116,6 +120,10 @@ Reslide.view = new function() {
      */
     this.onNextPage = function() {
         Reslide.view.setPage(Reslide.view.pageNum + 1);
+
+        if(Reslide.view.presenterMode) {
+            Reslide.sync.write(Reslide.view.pageNum);
+        }
     };
 
     this.load = function(theURL) {
