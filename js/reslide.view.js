@@ -30,6 +30,7 @@ Reslide.view = new function() {
             Reslide.view.setPage(theData.data.slide);
         } else {
             // TODO: react to error
+            console.warn('handleRead() problem', theData.message);
         }
     };
 
@@ -39,6 +40,7 @@ Reslide.view = new function() {
             console.log('Write success');
         } else {
             // TODO: react to error
+            console.warn('handleWrite() problem');
         }
     };
 
@@ -95,6 +97,9 @@ Reslide.view = new function() {
     };
 
     this.setPage = function(thePageNum) {
+        if(!Reslide.view.pdfDoc || thePageNum >= Reslide.view.pdfDoc.numPages || thePageNum < 1) {
+            return;
+        }
         Reslide.view.pageNum = thePageNum;
         Reslide.view.queueRenderPage(Reslide.view.pageNum);
     }
@@ -103,23 +108,14 @@ Reslide.view = new function() {
      * Displays previous page.
      */
     this.onPrevPage = function() {
-        if(!Reslide.view.pdfDoc || Reslide.view.pageNum <= 1) {
-            return;
-        }
-        Reslide.view.pageNum--;
-        Reslide.view.queueRenderPage(Reslide.view.pageNum);
+        Reslide.view.setPage(Reslide.view.pageNum - 1);
     };
 
     /**
      * Displays next page.
      */
     this.onNextPage = function() {
-        if(!Reslide.view.pdfDoc || Reslide.view.pageNum >= Reslide.view.pdfDoc.numPages) {
-            return;
-        }
-
-        Reslide.view.pageNum++;
-        Reslide.view.queueRenderPage(Reslide.view.pageNum);
+        Reslide.view.setPage(Reslide.view.pageNum + 1);
     };
 
     this.load = function(theURL) {

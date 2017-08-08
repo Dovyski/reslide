@@ -3,6 +3,7 @@ var Reslide = Reslide || {};
 Reslide.sync = new function() {
     this.REFRESH_RATE_MILLISECONDS = 1000;
 
+    this.presenterId = null;
     this.presentationId = null;
     this.intervalId = null;
     this.callback = null;
@@ -29,6 +30,8 @@ Reslide.sync = new function() {
 
         if(Reslide.sync.callback) {
             Reslide.sync.callback.call(Reslide.sync.callbackContext, theData);
+        } else {
+            console.error('Reslide.sync.onSuccess() - no good:', theData.message);
         }
     };
 
@@ -45,7 +48,7 @@ Reslide.sync = new function() {
     };
 
     this.write = function() {
-        Reslide.sync.doAjax({method: 'write', id: Reslide.sync.presentationId});
+        Reslide.sync.doAjax({method: 'write', presenter: Reslide.sync.presenterId, slide: Reslide.view.pageNum});
     };
 
     this.read = function() {
@@ -63,7 +66,8 @@ Reslide.sync = new function() {
         this.startStream(this.read, theCallback, theCallbackContext);
     };
 
-    this.startWritingStream = function(thePresentationId, theCallback, theCallbackContext) {
+    this.startWritingStream = function(thePresentationId, thePresenterId, theCallback, theCallbackContext) {
+        this.presenterId = thePresenterId;
         this.presentationId = thePresentationId;
         this.startStream(this.write, theCallback, theCallbackContext);
     };
