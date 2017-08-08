@@ -7,6 +7,7 @@ Reslide.view = new function() {
     this.pageNum = 1,
     this.pageRendering = false,
     this.pageNumPending = null,
+    this.loading = true;
 
     this.config = {
         url: '../data/test.pdf',
@@ -23,7 +24,12 @@ Reslide.view = new function() {
     };
 
     this.handleRead = function(theData) {
-        console.log('Reslide.view.handleRead()', theData);
+        if(theData.success) {
+            // TODO: hide loading message
+            Reslide.view.setPage(theData.data.slide);
+        } else {
+            // TODO: react to error
+        }
     };
 
     /**
@@ -31,6 +37,10 @@ Reslide.view = new function() {
      * @param num Page number.
      */
     this.renderPage = function(num) {
+        if(Reslide.view.loading) {
+            return;
+        }
+
         Reslide.view.pageRendering = true;
 
         this.pdfDoc.getPage(num).then(function(page) {
@@ -54,7 +64,6 @@ Reslide.view = new function() {
                 if (Reslide.view.pageNumPending !== null) {
                     // New page rendering is pending
                     Reslide.view.renderPage(Reslide.view.pageNumPending);
-                    Reslide.view.pageNumPending = null;
                 }
             });
         });
@@ -105,9 +114,13 @@ Reslide.view = new function() {
 
     this.load = function() {
         console.debug('Starting to load: ', Reslide.view.config.url);
+        Reslide.view.loading = true;
+
         PDFJS.getDocument(Reslide.view.config.url).then(function(pdfDoc_) {
             console.debug('Finished loading!');
+            Reslide.view.loading = false;
             Reslide.view.pdfDoc = pdfDoc_;
+
             document.getElementById('page_count').textContent = Reslide.view.pdfDoc.numPages;
 
             // Initial/first page rendering
