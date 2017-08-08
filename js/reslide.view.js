@@ -112,5 +112,6 @@ Reslide.view = new function() {
     };
 };
 
-// Get the party started
-Reslide.view.start();
+$(function() {
+    Reslide.view.start();
+});
