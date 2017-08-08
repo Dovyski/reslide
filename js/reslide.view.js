@@ -22,6 +22,10 @@ Reslide.view = new function() {
         document.getElementById('next').addEventListener('click', this.onNextPage);
     };
 
+    this.handleRead = function(theData) {
+        console.log('Reslide.view.handleRead()', theData);
+    };
+
     /**
      * Get page info from document, resize canvas accordingly, and render page.
      * @param num Page number.
@@ -71,6 +75,11 @@ Reslide.view = new function() {
         }
     };
 
+    this.setPage = function(thePageNum) {
+        Reslide.view.pageNum = thePageNum;
+        Reslide.view.queueRenderPage(Reslide.view.pageNum);
+    }
+
     /**
      * Displays previous page.
      */
@@ -111,7 +120,3 @@ Reslide.view = new function() {
         Reslide.view.load();
     };
 };
-
-$(function() {
-    Reslide.view.start();
-});
