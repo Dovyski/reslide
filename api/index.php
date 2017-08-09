@@ -57,9 +57,18 @@ try {
 			$aPresenterData = loadSyncData($aPresenter);
 
 			writeSyncData($aPresenterData['viewer_id'], array(
-				'slide' 	 => $aSlide,
-				'write_time' => time()
+				'slide'        => $aSlide,
+				'write_time'   => time()
 			));
+
+			$aBreadcrumbs = loadBreadcrums($aPresenterData['viewer_id']);
+			$aViewerDelaySeconds = -1;
+
+			if($aBreadcrumbs !== false) {
+				$aLastViewerRead = isset($aBreadcrumbs['last_read']) ? $aBreadcrumbs['last_read'] : 0;
+				$aViewerDelaySeconds = time() - $aLastViewerRead;
+			}
+			$aReturn['data'] = array('viewer_delay' => $aViewerDelaySeconds);
 			break;
 
 		default:

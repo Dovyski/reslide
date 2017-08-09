@@ -10,6 +10,18 @@ function writeBreadcrums($theId, $theData) {
 	file_put_contents($aFile, serialize($theData));
 }
 
+function loadBreadcrums($theId) {
+	if(empty($theId)) {
+		throw new Exception('Invalid or empty id to load breadcrums.');
+	}
+
+	$aHash = md5($theId);
+	$aFile = DATA_DIR . DIRECTORY_SEPARATOR . $aHash . '.breadcrumbs';
+	$aData = @unserialize(@file_get_contents($aFile));
+
+	return $aData;
+}
+
 function loadSyncData($theId) {
 	if(empty($theId)) {
 		throw new Exception('Invalid or empty id in load sync.');

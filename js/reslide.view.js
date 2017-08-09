@@ -32,22 +32,33 @@ Reslide.view = new function() {
         });
     };
 
-    this.handleRead = function(theData) {
-        if(theData.success) {
-            // TODO: hide loading message
-            Reslide.view.setPage(theData.data.slide);
+    this.message = function(theMessage) {
+        $('#general-message').html(theMessage).show();
+    }
+
+    this.handleRead = function(theResponse) {
+        if(theResponse.success) {
+            Reslide.view.setPage(theResponse.data.slide);
         } else {
-            // TODO: react to error
-            console.warn('handleRead() problem', theData.message);
+            Reslide.view.message(theResponse.message);
+            console.warn('handleRead() problem', theResponse.message);
         }
     };
 
-    this.handleWrite = function(theData) {
-        if(theData.success) {
-            // TODO: hide loading message
-            console.log('Write success');
+    // Source: https://stackoverflow.com/a/25279340/29827
+    this.formatTimeFromSeconds = function(theSeconds) {
+        var aDate = new Date(null);
+        aDate.setSeconds(theSeconds);
+
+        return aDate.toISOString().substr(11, 8);
+    }
+
+    this.handleWrite = function(theResponse) {
+        if(theResponse.success) {
+            var aViewerDelay = theResponse.data.viewer_delay;
+            $('#viewer_delay').html(Reslide.view.formatTimeFromSeconds(aViewerDelay));
         } else {
-            // TODO: react to error
+            Reslide.view.message(theResponse.message);
             console.warn('handleWrite() problem');
         }
     };
