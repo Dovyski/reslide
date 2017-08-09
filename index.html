@@ -1,9 +1,52 @@
-<html lang="en-us">
-    <head>
-        <title>Reslide - remotely control the slides of your presentation</title>
-        <link rel="stylesheet" type="text/css" href="./css/reslide.css" />
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Remotely control the slides of your presentation">
+    <meta name="author" content="Fernando Bevilacqua">
+    <link rel="icon" href="./favicon.png">
+
+    <title>Reslide - share and remotely control the slides of your presentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <link href="./css/reslide.css?20170809" rel="stylesheet">
+  </head>
+
+  <body>
+        <div class="navbar-wrapper">
+            <div class="container">
+                <nav class="navbar navbar-static-top">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <img src="./img/reslide-logo.png" />
+                            <a class="navbar-brand" href="./">reSlide</a>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse">
+                            <ul class="nav navbar-nav pull-right">
+                                <li><a href="https://github.com/Dovyski/reslide" target="_blank"><img src="./img/github.png" style="width: 35px; height: auto; margin-top: -10px;" title="Github repo"> Fork on Github</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="page-header">
+          <div class="clouds"></div>
+          <div class="clouds"></div>
+        </div>
+
         <div class="dropzone" id="dropzone"></div>
 
         <script src="./js/jquery-3.2.1.min.js"></script>
@@ -14,7 +57,7 @@
               var aDropzone = new Dropzone('#dropzone', {
                   url: './api/?method=create',
                   acceptedFiles: 'application/pdf',
-                  dictDefaultMessage: 'Here!'
+                  dictDefaultMessage: '<strong>Drag-and-drop your PDF presentation here</strong><br />(or click to find the PDF on your computer)'
               });
               aDropzone.on('addedfile', function(file) {
                   // TODO: do something?
@@ -31,5 +74,20 @@
               });
             })
         </script>
+
+        <footer class="container foot">
+           <div class="row">
+             <div class="col-md-9">
+                 <h5>About</h5>
+                 <p>Reslide allows you to share and remotely control your PDF-based presentations, all in the browser. It is an open-source project developed by <a href="https://github.com/Dovyski" target="_blank">Fernando Bevilacqua</a>. This site is provided "as is" with no warranties. Don't use it for important stuff, you might lose and/or get your data stolen. All presentations uploaded to the site are periodically deleted.</p>
+             </div>
+             <div class="col-md-1"></div>
+             <div class="col-md-2">
+                 <h5>Links</h5>
+                 <p><a href="https://twitter.com/As3GameGears" target="_blank">Follow me on Twitter</a></p>
+                 <p><a href="https://github.com/Dovyski/reslide" target="_blank">Github repository</a></p>
+             </div>
+           </div>
+        </footer>
     </body>
 </html>
