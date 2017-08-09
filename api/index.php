@@ -13,10 +13,24 @@ try {
 			$aPresenterId = md5(rand() . 'blah' . time()); // TODO: improve this
 			$aPresenterHash = md5($aPresenterId);
 			$aViewerId = md5(rand() . $aPresenterHash);
+
+			if(empty($_FILES) || !isset($_FILES['file']) || $_FILES['file']['type'] != 'application/pdf') {
+				throw new Exception('Provided file is invalid.');
+			}
+
+		    $aTempFile = $_FILES['file']['tmp_name'];
+		    $aTargetPath = DATA_DIR . DIRECTORY_SEPARATOR;
+		    $aTargetFile =  $aTargetPath. $aPresenterHash . '.pdf';
+
+		    $aOk = move_uploaded_file($aTempFile, $aTargetFile);
+
+			if(!$aOk) {
+				throw new Exception('Unable to store file.');
+			}
+
 			$aData = array(
 				'viewer_id' => $aViewerId
 			);
-
 			file_put_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aPresenterHash, serialize($aData));
 
 			$aReturn['data'] = array(
