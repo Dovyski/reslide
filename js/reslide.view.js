@@ -157,6 +157,7 @@ Reslide.view = new function() {
         Reslide.view.presentationId = theId;
 
         if(thePresenterMode) {
+            $('#viewer_url').html('<a href="./?id=' + theId + '">this link</a>');
             $('#control-panel').show();
         }
 

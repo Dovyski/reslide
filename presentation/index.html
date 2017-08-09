@@ -19,13 +19,21 @@
                 width: 100%;
                 height: auto;
             }
+
+            .control-panel a:link,
+            .control-panel a:active,
+            .control-panel a:visited,
+            .control-panel a:hover {
+                color: #f2f2f2;
+            }
         </style>
     </head>
     <body>
         <div id="control-panel" class="control-panel">
-          <button id="prev">Previous</button>
-          <button id="next">Next</button>
-          <span>Slide: <span id="page_num"></span> / <span id="page_count"></span></span>
+          <span>Slide: <span id="page_num">?</span>/<span id="page_count">?</span></span>
+          <button id="prev">&lt;</button>
+          <button id="next">&gt;</button>
+          <span style="padding-left: 10px;"> Share <span id="viewer_url"></span> to your viewers.</span>
         </div>
 
         <canvas id="the-canvas"></canvas>
