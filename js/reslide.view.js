@@ -17,21 +17,23 @@ Reslide.view = new function() {
         scale: 2.0
     };
 
-    this.init = function() {
+    this.init = function(thePresenterMode) {
         //PDFJS.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
         this.canvas = document.getElementById('the-canvas'),
         this.canvasContext = this.canvas.getContext('2d');
 
-        document.getElementById('prev').addEventListener('click', this.onPrevPage);
-        document.getElementById('next').addEventListener('click', this.onNextPage);
+        if(thePresenterMode) {
+            document.getElementById('prev').addEventListener('click', this.onPrevPage);
+            document.getElementById('next').addEventListener('click', this.onNextPage);
 
-        // Listen to arrow keys
-        $(document).keydown(function(e) {
-            switch(e.which) {
-                case 37: Reslide.view.onPrevPage(); break; // left arrow
-                case 39: Reslide.view.onNextPage(); break; // right arrow
-            }
-        });
+            // Listen to arrow keys
+            $(document).keydown(function(e) {
+                switch(e.which) {
+                    case 37: Reslide.view.onPrevPage(); break; // left arrow
+                    case 39: Reslide.view.onNextPage(); break; // right arrow
+                }
+            });
+        }
     };
 
     this.message = function(theMessage) {
@@ -52,13 +54,14 @@ Reslide.view = new function() {
         var aDate = new Date(null);
         aDate.setSeconds(theSeconds);
 
-        return aDate.toISOString().substr(11, 8);
+        return aDate.toISOString().substr(14, 8);
     }
 
     this.handleWrite = function(theResponse) {
         if(theResponse.success) {
             var aViewerDelay = theResponse.data.viewer_delay;
-            $('#viewer_delay').html(Reslide.view.formatTimeFromSeconds(aViewerDelay));
+            var aText = aViewerDelay < 0 ? '<em>Currently nobody is viewing.</em>' : ('Someone is viewing (delay: ' + Reslide.view.formatTimeFromSeconds(aViewerDelay) + ')');
+            $('#viewer_delay').html(aText);
         } else {
             Reslide.view.message(theResponse.message);
             console.warn('handleWrite() problem');
@@ -186,7 +189,7 @@ Reslide.view = new function() {
             $('#viewer_url').html('<a href="./?id=' + theId + '">this link</a>');
         }
 
-        Reslide.view.init();
+        Reslide.view.init(thePresenterMode);
         Reslide.view.load(theFileURL);
     };
 };
