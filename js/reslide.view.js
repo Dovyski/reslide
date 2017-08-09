@@ -105,7 +105,7 @@ Reslide.view = new function() {
     };
 
     this.setPage = function(thePageNum) {
-        if(!Reslide.view.pdfDoc || thePageNum > Reslide.view.pdfDoc.numPages || thePageNum < 1) {
+        if(!Reslide.view.pdfDoc || thePageNum > Reslide.view.pdfDoc.numPages || thePageNum < 1 || Reslide.view.pageNum == thePageNum) {
             return;
         }
         Reslide.view.pageNum = thePageNum;
@@ -140,6 +140,14 @@ Reslide.view = new function() {
 
         PDFJS.getDocument(theURL).then(function(pdfDoc_) {
             console.debug('Finished loading!');
+
+            $('#general-message').hide();
+            if(Reslide.view.presenterMode) {
+                $('#presenter-stuff').show();
+            } else {
+                $('#control-panel').hide();
+            }
+
             Reslide.view.loading = false;
             Reslide.view.pdfDoc = pdfDoc_;
 
@@ -156,9 +164,10 @@ Reslide.view = new function() {
         Reslide.view.presenterMode = thePresenterMode;
         Reslide.view.presentationId = theId;
 
+        $('#general-message').html('Loading presentation, please wait.');
+
         if(thePresenterMode) {
             $('#viewer_url').html('<a href="./?id=' + theId + '">this link</a>');
-            $('#control-panel').show();
         }
 
         Reslide.view.init();

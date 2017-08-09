@@ -7,12 +7,16 @@
                 color: #f2f2f2;
                 font-size: 0.8em;
                 width: 40%;
+                height: 20px;
                 margin: 0 auto;
                 background: #3e3f3a;
-                display: none;
                 text-align: center;
-                padding: 3px;
+                padding: 3px 5px 2px 3px;
                 border: 1px solid black;
+            }
+
+            #presenter-stuff {
+                display: none;
             }
 
             #the-canvas {
@@ -30,10 +34,13 @@
     </head>
     <body>
         <div id="control-panel" class="control-panel">
-          <span>Slide: <span id="page_num">?</span>/<span id="page_count">?</span></span>
-          <button id="prev">&lt;</button>
-          <button id="next">&gt;</button>
-          <span style="padding-left: 10px;"> Share <span id="viewer_url"></span> to your viewers.</span>
+            <div id="presenter-stuff">
+              <span>Slide: <span id="page_num">?</span>/<span id="page_count">?</span></span>
+              <button id="prev">&lt;</button>
+              <button id="next">&gt;</button>
+              <span style="padding-left: 10px;"> Share <span id="viewer_url"></span> to your viewers.</span>
+            </div>
+            <div id="general-message"></div>
         </div>
 
         <canvas id="the-canvas"></canvas>
