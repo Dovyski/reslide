@@ -3,6 +3,8 @@
 @include_once(dirname(__FILE__) . '/../config.php');
 @include_once(dirname(__FILE__) . '/config.php');
 
+require_once(dirname(__FILE__) . '/functions.php');
+
 $aMethod    = isset($_REQUEST['method']) ? $_REQUEST['method'] : '';
 $aId        = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';
 $aPresenter = isset($_REQUEST['presenter']) ? $_REQUEST['presenter'] : '';
@@ -18,80 +20,46 @@ try {
 			$aPresentationFile = DATA_DIR . DIRECTORY_SEPARATOR . $aHash . '.pdf';
 
 			if(!file_exists($aPresentationFile)) {
-				throw new Exception('Could no load presentation file.');
+				throw new Exception('Could not load presentation file.');
 			}
 
 			$aFile = fopen($aPresentationFile, 'rb');
 			header('Content-Type: application/pdf');
 			fpassthru($aFile);
+			fclose($aFile);
 			exit();
 
 			break;
 
 		case 'create':
 			$aPresenterId = md5(rand() . 'blah' . time()); // TODO: improve this
-			$aPresenterHash = md5($aPresenterId);
-			$aViewerId = md5(rand() . $aPresenterHash);
-			$aViewerHash = md5($aViewerId);
+			$aViewerId    = md5(rand() . $aPresenterId . time());
 
-			if(empty($_FILES) || !isset($_FILES['file'])) {
-				throw new Exception('Provided file is invalid.');
-			}
+			receiveUploadedFile($aViewerId);
 
-		    $aTempFile = $_FILES['file']['tmp_name'];
-		    $aTargetPath = DATA_DIR . DIRECTORY_SEPARATOR;
-		    $aTargetFile =  $aTargetPath. $aViewerHash . '.pdf';
-
-		    $aOk = move_uploaded_file($aTempFile, $aTargetFile);
-
-			if(!$aOk) {
-				throw new Exception('Unable to store file.');
-			}
-
-			$aData = array(
+			writeSyncData($aPresenterId, array(
 				'viewer_id' => $aViewerId
-			);
-			file_put_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aPresenterHash, serialize($aData));
+			));
 
 			$aReturn['data'] = array(
-				'viewer_id' => $aViewerId,
+				'viewer_id'    => $aViewerId,
 				'presenter_id' => $aPresenterId
 			);
 			break;
 
 		case 'read':
-			if($aId == '') {
-				throw new Exception('Empty id');
-			}
-			$aHash = md5($aId);
-			$aSyncData = unserialize(@file_get_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aHash));
-
-			if($aSyncData === false) {
-				throw new Exception('Something wrong with the unserialize.');
-			}
-
-			$aReturn['data'] = $aSyncData;
+			$aReturn['data'] = loadSyncData($aId);
+			writeBreadcrums($aId, array('last_read' => time()));
 			break;
 
 		case 'write':
-			if($aPresenter == '') {
-				throw new Exception('Missing presenter identification.');
-			}
+			$aSlide = isset($_REQUEST['slide']) ? $_REQUEST['slide'] : '1';
+			$aPresenterData = loadSyncData($aPresenter);
 
-			$aPresenterHash = md5($aPresenter);
-			$aPresenterData = unserialize(@file_get_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aPresenterHash));
-
-			if($aPresenterData === false) {
-				throw new Exception('Unable to load presenter data.');
-			}
-
-			$aViewerPackage = array(
-				'slide' => isset($_REQUEST['slide']) ? $_REQUEST['slide'] : '1',
+			writeSyncData($aPresenterData['viewer_id'], array(
+				'slide' 	 => $aSlide,
 				'write_time' => time()
-			);
-
-			$aViewerHash = md5($aPresenterData['viewer_id']);
-			file_put_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aViewerHash, serialize($aViewerPackage));
+			));
 			break;
 
 		default:
