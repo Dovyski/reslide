@@ -1,7 +1,35 @@
 <html lang="en-us">
     <head>
+        <title>Reslide - remotely control the slides of your presentation</title>
+        <link rel="stylesheet" type="text/css" href="./css/reslide.css" />
     </head>
     <body>
-        Index
+        <div class="dropzone" id="dropzone"></div>
+
+        <script src="./js/jquery-3.2.1.min.js"></script>
+        <script src="./js/dropzone.min.js"></script>
+        <script>
+            Dropzone.autoDiscover = false;
+            $(function() {
+              var aDropzone = new Dropzone('#dropzone', {
+                  url: './api/?method=create',
+                  acceptedFiles: 'application/pdf',
+                  dictDefaultMessage: 'Here!'
+              });
+              aDropzone.on('addedfile', function(file) {
+                  // TODO: do something?
+              });
+              aDropzone.on('error', function(theFile, theErrorMessage) {
+                  console.error(theErrorMessage);
+              });
+              aDropzone.on('success', function(theFile, theResponse) {
+                  if(theResponse.success) {
+                      window.location = './presentation/?id=' + theResponse.data.viewer_id + '&presenter=' + theResponse.data.presenter_id;
+                  } else {
+                      console.error('Something bad', theResponse.message);
+                  }
+              });
+            })
+        </script>
     </body>
 </html>

@@ -20,6 +20,7 @@ try {
 			file_put_contents(DATA_DIR . DIRECTORY_SEPARATOR . $aPresenterHash, serialize($aData));
 
 			$aReturn['data'] = array(
+				'viewer_id' => $aViewerId,
 				'presenter_id' => $aPresenterId
 			);
 			break;
