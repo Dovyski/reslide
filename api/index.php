@@ -9,10 +9,29 @@ $aReturn    = array('success' => true, 'method' => $aMethod, 'time' => time());
 
 try {
 	switch ($aMethod) {
+		case 'content':
+			if($aId == '') {
+				throw new Exception('Empty presentation id.');
+			}
+			$aHash = md5($aId);
+			$aPresentationFile = DATA_DIR . DIRECTORY_SEPARATOR . $aHash . '.pdf';
+
+			if(!file_exists($aPresentationFile)) {
+				throw new Exception('Could no load presentation file.');
+			}
+
+			$aFile = fopen($aPresentationFile, 'rb');
+			header('Content-Type: application/pdf');
+			fpassthru($aFile);
+			exit();
+
+			break;
+
 		case 'create':
 			$aPresenterId = md5(rand() . 'blah' . time()); // TODO: improve this
 			$aPresenterHash = md5($aPresenterId);
 			$aViewerId = md5(rand() . $aPresenterHash);
+			$aViewerHash = md5($aViewerId);
 
 			if(empty($_FILES) || !isset($_FILES['file'])) {
 				throw new Exception('Provided file is invalid.');
@@ -20,7 +39,7 @@ try {
 
 		    $aTempFile = $_FILES['file']['tmp_name'];
 		    $aTargetPath = DATA_DIR . DIRECTORY_SEPARATOR;
-		    $aTargetFile =  $aTargetPath. $aPresenterHash . '.pdf';
+		    $aTargetFile =  $aTargetPath. $aViewerHash . '.pdf';
 
 		    $aOk = move_uploaded_file($aTempFile, $aTargetFile);
 

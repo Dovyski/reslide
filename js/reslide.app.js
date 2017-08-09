@@ -6,7 +6,7 @@ Reslide.app = new function() {
         var aPresenterId = Reslide.sync.getUrlParam('presenter');
         var aIsPresenter = aPresenterId !== undefined;
 
-        Reslide.view.start(aIsPresenter, aPresentationId, '../data/test.pdf');
+        Reslide.view.start(aIsPresenter, aPresentationId, '../api/?method=content&id=' + aPresentationId);
 
         if(aIsPresenter) {
             Reslide.sync.startWritingStream(aPresentationId, aPresenterId, Reslide.view.handleWrite);
