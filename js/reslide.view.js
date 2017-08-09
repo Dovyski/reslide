@@ -1,6 +1,8 @@
 var Reslide = Reslide || {};
 
 Reslide.view = new function() {
+    this.PENDING_RENDER_INTERVAL_MILLISECONDS = 500;
+
     this.presenterMode = true;
     this.presentationId = null;
     this.pdfDoc = null;
@@ -8,7 +10,7 @@ Reslide.view = new function() {
     this.canvasContext = null;
     this.pageNum = 1,
     this.pageRendering = false,
-    this.pageNumPending = null,
+    this.pagesPending = [],
     this.loading = true;
 
     this.config = {
@@ -72,6 +74,11 @@ Reslide.view = new function() {
             return;
         }
 
+        if(Reslide.view.pageRendering) {
+            Reslide.view.pagesPending.push(num);
+            return;
+        }
+
         Reslide.view.pageRendering = true;
 
         this.pdfDoc.getPage(num).then(function(page) {
@@ -91,11 +98,6 @@ Reslide.view = new function() {
             // Wait for rendering to finish
             renderTask.promise.then(function() {
                 Reslide.view.pageRendering = false;
-
-                if (Reslide.view.pageNumPending !== null) {
-                    // New page rendering is pending
-                    Reslide.view.renderPage(Reslide.view.pageNumPending);
-                }
             });
         });
 
@@ -103,24 +105,12 @@ Reslide.view = new function() {
         document.getElementById('page_num').textContent = Reslide.view.pageNum;
     };
 
-    /**
-     * If another page rendering in progress, waits until the rendering is
-     * finised. Otherwise, executes rendering immediately.
-     */
-    this.queueRenderPage = function(num) {
-        if (Reslide.view.pageRendering) {
-            Reslide.view.pageNumPending = num;
-        } else {
-            Reslide.view.renderPage(num);
-        }
-    };
-
     this.setPage = function(thePageNum) {
         if(!Reslide.view.pdfDoc || thePageNum > Reslide.view.pdfDoc.numPages || thePageNum < 1 || Reslide.view.pageNum == thePageNum) {
             return;
         }
         Reslide.view.pageNum = thePageNum;
-        Reslide.view.queueRenderPage(Reslide.view.pageNum);
+        Reslide.view.renderPage(Reslide.view.pageNum);
     }
 
     /**
@@ -166,7 +156,22 @@ Reslide.view = new function() {
 
             // Initial/first page rendering
             Reslide.view.renderPage(Reslide.view.pageNum);
+            Reslide.view.processPendingRendering();
         });
+    };
+
+    this.processPendingRendering = function() {
+        window.setTimeout(Reslide.view.processPendingRendering, Reslide.view.PENDING_RENDER_INTERVAL_MILLISECONDS);
+
+        if(Reslide.view.pageRendering || Reslide.view.pagesPending.length == 0) {
+            // Rendering in progress or nothing to render
+            return;
+        }
+
+        var aLast = Reslide.view.pagesPending[Reslide.view.pagesPending.length - 1];
+        Reslide.view.pagesPending.splice(0);
+
+        Reslide.view.renderPage(aLast);
     };
 
     this.start = function(thePresenterMode, theId, theFileURL) {
