@@ -48,6 +48,7 @@
         </div>
 
         <div class="dropzone" id="dropzone"></div>
+        <div id="messages"></div>
 
         <script src="./js/jquery-3.2.1.min.js"></script>
         <script src="./js/dropzone.min.js"></script>
@@ -57,19 +58,31 @@
               var aDropzone = new Dropzone('#dropzone', {
                   url: './api/?method=create',
                   acceptedFiles: 'application/pdf',
-                  dictDefaultMessage: '<strong>Drag-and-drop your PDF presentation here</strong><br />(or click to find the PDF on your computer)'
+                  dictDefaultMessage: '<strong>Drag-and-drop your PDF presentation here</strong><br />(or click to find the PDF on your computer)',
+                  dictMaxFilesExceeded: 'You can only upload a single PDF file.',
+                  maxFiles: 1, // only a single PDF is allowed
+                  maxFilesize: 64 // Mb
               });
               aDropzone.on('addedfile', function(file) {
                   // TODO: do something?
+                  $('#dropzone').hide();
+                  $('#messages').html('<div class="alert alert-info" role="alert"><strong><img src="./img/circle-o-notch.png" class="spin" style="width: 16px; height: 16px;"/> Uploading!</strong> Please wait a bit. Progress: <span id="progress"></span></div>');
+              });
+              aDropzone.on('uploadprogress', function(theFile, theProgress, theBytesSent) {
+                  $('#progress').html(theProgress.toFixed(2) + '%');
               });
               aDropzone.on('error', function(theFile, theErrorMessage) {
+                  $('#messages').html('<div class="alert alert-danger" role="alert"><strong>Oops!</strong> ' + theErrorMessage + '.</div>');
                   console.error(theErrorMessage);
               });
               aDropzone.on('success', function(theFile, theResponse) {
                   if(theResponse.success) {
-                      window.location = './presentation/?id=' + theResponse.data.viewer_id + '&presenter=' + theResponse.data.presenter_id;
+                      var aUrl = './presentation/?id=' + theResponse.data.viewer_id + '&presenter=' + theResponse.data.presenter_id;
+                      $('#messages').html('<div class="alert alert-success" role="alert"><strong>All good!</strong> You are being redirected, hang tight. If nothing happens, click <a href="' + aUrl + '">here</a>.</div>');
+                      window.location = aUrl;
                   } else {
-                      console.error('Something bad', theResponse.message);
+                      $('#messages').html('<div class="alert alert-danger" role="alert"><strong>Oops!</strong> ' + theResponse.message + '</div>');
+                      console.error('Something bad:', theResponse.message);
                   }
               });
             })

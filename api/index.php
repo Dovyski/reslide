@@ -14,7 +14,7 @@ try {
 			$aPresenterHash = md5($aPresenterId);
 			$aViewerId = md5(rand() . $aPresenterHash);
 
-			if(empty($_FILES) || !isset($_FILES['file']) || $_FILES['file']['type'] != 'application/pdf') {
+			if(empty($_FILES) || !isset($_FILES['file'])) {
 				throw new Exception('Provided file is invalid.');
 			}
 
