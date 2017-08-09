@@ -22,6 +22,14 @@ Reslide.view = new function() {
 
         document.getElementById('prev').addEventListener('click', this.onPrevPage);
         document.getElementById('next').addEventListener('click', this.onNextPage);
+
+        // Listen to arrow keys
+        $(document).keydown(function(e) {
+            switch(e.which) {
+                case 37: Reslide.view.onPrevPage(); break; // left arrow
+                case 39: Reslide.view.onNextPage(); break; // right arrow
+            }
+        });
     };
 
     this.handleRead = function(theData) {
@@ -147,6 +155,10 @@ Reslide.view = new function() {
 
         Reslide.view.presenterMode = thePresenterMode;
         Reslide.view.presentationId = theId;
+
+        if(thePresenterMode) {
+            $('#control-panel').show();
+        }
 
         Reslide.view.init();
         Reslide.view.load(theFileURL);

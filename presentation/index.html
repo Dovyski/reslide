@@ -1,15 +1,34 @@
 <html lang="en-us">
     <head>
         <title>Reslide - presentation</title>
+        <style media="screen" type="text/css">
+            .control-panel {
+                font-family: Verdana;
+                color: #f2f2f2;
+                font-size: 0.8em;
+                width: 40%;
+                margin: 0 auto;
+                background: #3e3f3a;
+                display: none;
+                text-align: center;
+                padding: 3px;
+                border: 1px solid black;
+            }
+
+            #the-canvas {
+                width: 100%;
+                height: auto;
+            }
+        </style>
     </head>
     <body>
-        <div>
+        <div id="control-panel" class="control-panel">
           <button id="prev">Previous</button>
           <button id="next">Next</button>
-          <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+          <span>Slide: <span id="page_num"></span> / <span id="page_count"></span></span>
         </div>
 
-        <canvas id="the-canvas" style="width: 100%; height: auto;"></canvas>
+        <canvas id="the-canvas"></canvas>
 
         <script src="../js/jquery-3.2.1.min.js"></script>
         <script src="../js/pdf.js"></script>
