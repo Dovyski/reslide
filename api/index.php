@@ -1,6 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . '/config.php');
+@include_once(dirname(__FILE__) . '/../config.php');
+@include_once(dirname(__FILE__) . '/config.php');
 
 $aMethod    = isset($_REQUEST['method']) ? $_REQUEST['method'] : '';
 $aId        = isset($_REQUEST['id']) ? $_REQUEST['id'] : '';

@@ -1,5 +1,5 @@
 <?php
 
-define('DATA_DIR', dirname(__FILE__) . '/../data/');
+define('DATA_DIR', sys_get_temp_dir());
 
  ?>
